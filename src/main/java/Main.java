@@ -1,4 +1,7 @@
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 // import com.dampcake.bencode.Bencode; - available if you need it!
 
 public class Main {
@@ -40,6 +43,35 @@ public class Main {
     } else if(bencodedString.charAt(0) == 'i'){
       int len = bencodedString.length();
       return Long.parseLong(bencodedString.substring(1, len-1));
+    } else if(bencodedString.charAt(0) == 'l') {
+      String data = bencodedString.substring(1, bencodedString.length()-1);
+      int idx = 0; // iterator to data string
+      List<Object> resList = new ArrayList<>();
+
+      while(idx < data.length()){
+        if(Character.isDigit(data.charAt(idx))){
+            int firstColonIndex = 0;
+            for(int i = idx; i < data.length(); i++) {
+                if(data.charAt(i) == ':') {
+                    firstColonIndex = i;
+                    break;
+                }
+            }
+            int length = Integer.parseInt(data.substring(idx, firstColonIndex));
+            resList.add(data.substring(firstColonIndex+1, firstColonIndex+1+length));
+            idx = firstColonIndex + 1 + length;
+        }else{
+            idx++;
+            StringBuilder sb = new StringBuilder();
+            while(data.charAt(idx) != 'e'){
+                sb.append(data.charAt(idx));
+                idx++;
+            }
+            resList.add(Long.parseLong(sb.toString()));
+            idx++;
+        }
+      }
+      return resList;
     } else {
       throw new RuntimeException("Only strings are supported at the moment");
     }
