@@ -1,7 +1,9 @@
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 // import com.dampcake.bencode.Bencode; - available if you need it!
 
 public class Main {
@@ -35,6 +37,8 @@ public class Main {
             return parseInteger(bencodedString);
         } else if(bencodedString.charAt(index) == 'l') {
             return parseList(bencodedString);
+        } else if(bencodedString.charAt(index) == 'd') {
+            return parseDictionary(bencodedString);
         } else {
             throw new RuntimeException("Invalid bencode format detected!");
         }
@@ -74,6 +78,21 @@ public class Main {
         }
         index++;  // skip the e of the list
         return list;
+    }
+
+    static Object parseDictionary(String bencodedString) {
+        index++;  // skip d character
+        Map<String, Object> map = new HashMap<>();
+        while(bencodedString.charAt(index) != 'e'){
+            //parse key first
+            String key = (String) decodeBencode(bencodedString);
+            //parse corresponding value
+            Object value = decodeBencode(bencodedString);
+
+            map.put(key, value);
+        }
+        index++;  // skip e character
+        return map;
     }
   
 }
