@@ -40,6 +40,10 @@ public class Main {
                 Map<String, Object> infoMap = (Map<String, Object>) torrentInfo.get("info");
                 Long fileLength = (Long) infoMap.get("length");
                 System.out.println("Length: " + fileLength);
+
+                Re_encode encode = new Re_encode();
+                String encodedInfo = encode.encodeInfoDict(infoMap);
+                System.out.println("Info Hash: " + encodedInfo);
             } else {
                 System.out.println("Invalid torrent file format");
             }

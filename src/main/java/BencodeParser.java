@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BencodeParser {
     private static int index;  // will be used across recursive calls
@@ -62,7 +59,7 @@ public class BencodeParser {
 
     public Object parseDictionary(String bencodedString) {
         index++;  // skip d character
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new TreeMap<>();
         while(bencodedString.charAt(index) != 'e'){
             //parse key first
             String key = (String) decodeBencode(bencodedString);
