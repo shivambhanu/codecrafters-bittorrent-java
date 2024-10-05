@@ -33,6 +33,8 @@ public class BencodeParser {
         }
         int length = Integer.parseInt(bencodedString.substring(index, firstColonIndex));
 
+        /* One of the most important part. I was stuck because of this for around 6 hours.
+        It is very important to handle the value of pieces key as byte[] array, because converting it to String creates data loss, for example(\x00 will make the string stop and don't take the further data ahead).*/
         if(rawByteFlag){
             try {
                 byte[] rawBytes = bencodedString.substring(firstColonIndex + 1, firstColonIndex + 1 + length).getBytes("ISO-8859-1");

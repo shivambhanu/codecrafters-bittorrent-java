@@ -21,15 +21,12 @@ public class Re_encode {
             } else if(value instanceof byte[]){
                 byte[] byteArray = (byte[]) value;
                 bencode.append(byteArray.length).append(':');
-                bencode.append(new String(byteArray, "ISO-8859-1"));  // Preserve the byte array as raw binary data
-                System.out.println("Instance of byte[] found!");
+                bencode.append(new String(byteArray, "ISO-8859-1"));  // Preserve the
             }else{
                 System.out.println("Invalid data type in dictionary!");
             }
         }
-
         bencode.append('e');
-        System.out.println(bencode.toString());
 
        String sha1Hash = calculateSHA1(bencode.toString().getBytes("ISO-8859-1"));
        return sha1Hash;
