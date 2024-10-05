@@ -32,18 +32,19 @@ public class Main {
             Object decoded = benParse.decodeBencode(bencodedValue);
 
             if(decoded instanceof Map){
-                Map<String, Object> torrentInfo = (Map<String, Object>) decoded;
+                Map<String, Object> torrentData = (Map<String, Object>) decoded;
 
-                String trackerURL = (String) torrentInfo.get("announce");
-                System.out.println("Tracker URL: " + trackerURL);
+//                String trackerURL = (String) torrentData.get("announce");
+//                System.out.println("Tracker URL: " + trackerURL);
 
-                Map<String, Object> infoMap = (Map<String, Object>) torrentInfo.get("info");
-                Long fileLength = (Long) infoMap.get("length");
-                System.out.println("Length: " + fileLength);
-
-                Re_encode encode = new Re_encode();
-                String encodedInfo = encode.encodeInfoDict(infoMap);
-                System.out.println("Info Hash: " + encodedInfo);
+                System.out.println(torrentData);
+//                Map<String, Object> infoMap = (Map<String, Object>) torrentData.get("info");
+//                Long fileLength = (Long) infoMap.get("length");
+//                System.out.println("Length: " + fileLength);
+//
+//                Re_encode encode = new Re_encode();
+//                String encodedInfo = encode.encodeInfoDict(infoMap);
+//                System.out.println("Info Hash: " + encodedInfo);
             } else {
                 System.out.println("Invalid torrent file format");
             }

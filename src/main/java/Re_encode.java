@@ -1,59 +1,56 @@
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 public class Re_encode {
 
-    public String encodeInfoDict(Map<String, Object> infoDict) {
+    public String encodeInfoDict(Map<String, Object> infoDict) throws Exception {
         // encode the data in lexicographical order(used treemap for this already while decoding)
-        StringBuilder sb = new StringBuilder();
-        for(String key : infoDict.keySet()){
-            sb.append(key.length()).append(":").append(key);
+        StringBuilder bencode = new StringBuilder();
+        bencode.append('d');
 
-//            System.out.println(sb.toString());
+        for(String key : infoDict.keySet()){
+            bencode.append(key.length()).append(":").append(key);
             Object value = infoDict.get(key);
-//            System.out.println(value.getClass());
 
             if(value instanceof Long) {
-                sb.append('i').append(value).append('e');
-            } else {
+                bencode.append('i').append(value).append('e');
+            } else if(value instanceof String) {
                 String strVal = (String) value;
-                if(key.equals("pieces")){
-                    // Handling binary string explicitly, as it creates error if handled as normal string.
-                    byte[] byteArray = strVal.getBytes(StandardCharsets.ISO_8859_1);
-
-                    for(byte b : byteArray){
-//                        System.out.print(b + ", ");
-                        sb.append(b);
-                    }
-
-                }else{
-                    sb.append(strVal.length()).append(':').append(strVal);
-                }
+                bencode.append(strVal.length()).append(':').append(strVal);
+            } else if(value instanceof byte[]){
+                byte[] byteArray = (byte[]) value;
+                bencode.append(byteArray.length).append(':');
+                bencode.append(new String(byteArray, "ISO-8859-1"));  // Preserve the byte array as raw binary data
+                System.out.println("Instance of byte[] found!");
+            }else{
+                System.out.println("Invalid data type in dictionary!");
             }
         }
 
-//        System.out.println(" ---->  " + sb.toString())
-        return calculateSHA1(sb.toString());
+        bencode.append('e');
+        System.out.println(bencode.toString());
+
+       String sha1Hash = calculateSHA1(bencode.toString().getBytes("ISO-8859-1"));
+       return sha1Hash;
     }
 
 
-    public String calculateSHA1(String input) {
+    public String calculateSHA1(byte[] data) {
         try{
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
-
-            byte[] hashBytes = digest.digest(input.getBytes());
+            byte[] hashBytes = digest.digest(data);
 
             StringBuilder hexString = new StringBuilder();
             for(byte b : hashBytes) {
                 String hex = Integer.toHexString(0xff & b);
-                if(hex.length() == 1)
+                if(hex.length() == 1){
                     hexString.append('0');
+                }
                 hexString.append(hex);
             }
 
-            return ("SHA-1 hash: " + hexString.toString());
+            return hexString.toString();
         } catch( NoSuchAlgorithmException e){
             e.printStackTrace();
         }

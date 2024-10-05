@@ -2,6 +2,7 @@ import java.util.*;
 
 public class BencodeParser {
     private static int index;  // will be used across recursive calls
+    private boolean rawByteFlag = false;
 
     public BencodeParser() {
         index = 0;
@@ -31,10 +32,22 @@ public class BencodeParser {
             }
         }
         int length = Integer.parseInt(bencodedString.substring(index, firstColonIndex));
-        String strVal = bencodedString.substring(firstColonIndex+1, firstColonIndex+1+length);
-        index = firstColonIndex + 1 + length;
 
-        return strVal;
+        if(rawByteFlag){
+            try {
+                byte[] rawBytes = bencodedString.substring(firstColonIndex + 1, firstColonIndex + 1 + length).getBytes("ISO-8859-1");
+                index = firstColonIndex + 1 + length;
+                return rawBytes;
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }else {
+            String strVal = bencodedString.substring(firstColonIndex + 1, firstColonIndex + 1 + length);
+            index = firstColonIndex + 1 + length;
+            return strVal;
+        }
+
+        return "---error---";
     }
 
 
@@ -57,14 +70,17 @@ public class BencodeParser {
         return list;
     }
 
+
     public Object parseDictionary(String bencodedString) {
         index++;  // skip d character
         Map<String, Object> map = new TreeMap<>();
         while(bencodedString.charAt(index) != 'e'){
             //parse key first
             String key = (String) decodeBencode(bencodedString);
-            //parse corresponding value
+
+            if(key.equals("pieces")) rawByteFlag = true;
             Object value = decodeBencode(bencodedString);
+            if(key.equals("pieces")) rawByteFlag = false;
 
             map.put(key, value);
         }
