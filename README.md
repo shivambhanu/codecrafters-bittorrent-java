@@ -33,3 +33,14 @@ Note: This section is for stages 2 and beyond.
    `src/main/java/Main.java`.
 1. Commit your changes and run `git push origin master` to submit your solution
    to CodeCrafters. Test output will be streamed to your terminal.
+
+
+## Some of the Reasons for Incorrect SHA-1 Hash of Info dictionary
+
+**Hint 1**: If you've forgotten, let me remind you that while encoding the `info` dictionary, the keys should be in **lexicographical order**.
+
+**Hint 2**: The value of the `pieces` key is a **byte string** (an array of bytes). Trying to typecast it to a `String` can lead to data loss, which results in an incorrect hash output.
+
+So, take care of this while decoding the string initially (**Stage 1**) and later in the current stage (**Stage 6**) while encoding these.
+
+**Note**: It’s up to you to research and decide which data type to use to prevent data loss.

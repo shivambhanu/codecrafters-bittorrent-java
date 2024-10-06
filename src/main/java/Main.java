@@ -45,6 +45,11 @@ public class Main {
                 Re_encode encode = new Re_encode();
                 String encodedInfo = encode.encodeInfoDict(infoMap);
                 System.out.println("Info Hash: " + encodedInfo);
+
+                Long pieceLength = (Long) infoMap.get("piece length");
+                System.out.println("Piece Length: " + pieceLength);
+
+                encode.pieceHashes(infoMap.get("pieces"));
             } else {
                 System.out.println("Invalid torrent file format");
             }

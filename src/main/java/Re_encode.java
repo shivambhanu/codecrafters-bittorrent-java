@@ -1,5 +1,6 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Map;
 
 public class Re_encode {
@@ -21,7 +22,7 @@ public class Re_encode {
             } else if(value instanceof byte[]){
                 byte[] byteArray = (byte[]) value;
                 bencode.append(byteArray.length).append(':');
-                bencode.append(new String(byteArray, "ISO-8859-1"));  // Preserve the
+                bencode.append(new String(byteArray, "ISO-8859-1"));
             }else{
                 System.out.println("Invalid data type in dictionary!");
             }
@@ -30,6 +31,25 @@ public class Re_encode {
 
        String sha1Hash = calculateSHA1(bencode.toString().getBytes("ISO-8859-1"));
        return sha1Hash;
+    }
+
+
+    public void pieceHashes(Object value) throws Exception{
+        System.out.println("Piece Hashes:");
+        byte[] alreadyHashedByteArr = (byte[]) value;
+
+        StringBuilder hexString = new StringBuilder();
+        for(byte b : alreadyHashedByteArr) {
+            String hex = Integer.toHexString(0xff & b);
+            if(hex.length() == 1){
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+
+        String hashInHex = hexString.toString();
+        for(int i = 0; i < hashInHex.length(); i+=40)
+            System.out.println(hashInHex.substring(i, i+40));
     }
 
 
