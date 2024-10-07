@@ -33,22 +33,19 @@ public class BencodeParser {
         }
         int length = Integer.parseInt(bencodedString.substring(index, firstColonIndex));
 
-        /* One of the most important part. I was stuck because of this for around 6 hours.
-        It is very important to handle the value of pieces key as byte[] array, because converting it to String creates data loss, for example(\x00 will make the string stop and don't take the further data ahead).*/
         if(rawByteFlag){
             try {
                 byte[] rawBytes = bencodedString.substring(firstColonIndex + 1, firstColonIndex + 1 + length).getBytes("ISO-8859-1");
-                index = firstColonIndex + 1 + length;
+                index = firstColonIndex + length + 1;
                 return rawBytes;
             } catch (Exception e){
                 e.printStackTrace();
             }
         }else {
             String strVal = bencodedString.substring(firstColonIndex + 1, firstColonIndex + 1 + length);
-            index = firstColonIndex + 1 + length;
+            index = firstColonIndex + length + 1;
             return strVal;
         }
-
         return "---error---";
     }
 
@@ -80,10 +77,11 @@ public class BencodeParser {
             //parse key first
             String key = (String) decodeBencode(bencodedString);
 
-            if(key.equals("pieces")) rawByteFlag = true;
+            if(key.equals("pieces") || key.equals("peers")) rawByteFlag = true;
             Object value = decodeBencode(bencodedString);
-            if(key.equals("pieces")) rawByteFlag = false;
+            if(key.equals("pieces") || key.equals("peers")) rawByteFlag = false;
 
+            System.out.println(key + ": " + value);
             map.put(key, value);
         }
         index++;  // skip e character

@@ -3,6 +3,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class DiscoverPeers {
     private String infoHash;
@@ -21,6 +23,14 @@ public class DiscoverPeers {
     }
 
 
+    public String hexToUrl(String hexInfoHash) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < hexInfoHash.length(); i+=2)
+            sb.append('%').append(hexInfoHash.substring(i, i+2).toUpperCase());
+        return sb.toString();
+    }
+
+
     public void sendGetRequest() {
         String urlEncodedInfoHash = hexToUrl(infoHash);
 
@@ -34,36 +44,23 @@ public class DiscoverPeers {
                 .build();
 
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response: " + response.body());
+            parseTrackerResponse(response.body());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
 
-    public String hexToUrl(String hexInfoHash) {
-        StringBuilder sb = new StringBuilder();
+    public void parseTrackerResponse(byte[] response) {
+        String bencodedValue = new String(response, StandardCharsets.ISO_8859_1);
+        BencodeParser benParse = new BencodeParser();
+        Object decoded = benParse.decodeBencode(bencodedValue);
 
-        for(int i = 0; i < hexInfoHash.length(); i+=2) {
-            sb.append('%').append(hexInfoHash.substring(i, i+2).toUpperCase());
-        }
-
-//        System.out.println("Url encoded hash: " + sb.toString());
-        return sb.toString();
+        // grab the peers field.
+        Map<String, Object> torrentData = (Map<String, Object>) decoded;
+        System.out.println(torrentData);
     }
 
-
-//    public byte[] hexToByteArray(String hexInfoHash) {
-//        int len = hexInfoHash.length();
-//        byte[] byteArr = new byte[len/2];
-//
-//        for(int i = 0; i < len; i+=2){
-//            byteArr[i/2] = (byte) ((Character.digit(hexInfoHash.charAt(i), 16) << 4) + Character.digit(hexInfoHash.charAt(i+1), 16));
-//        }
-//
-//        return byteArr;
-//    }
 }
