@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Re_encode {
 
-    public String encodeInfoDict(Map<String, Object> infoDict) throws Exception {
+    public String infoDictHasher(Map<String, Object> infoDict) throws Exception {
         // encode the data in lexicographical order(used treemap for this already while decoding)
         StringBuilder bencode = new StringBuilder();
         bencode.append('d');
