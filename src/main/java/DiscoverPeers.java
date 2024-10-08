@@ -4,6 +4,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 
 public class DiscoverPeers {
@@ -36,7 +37,8 @@ public class DiscoverPeers {
 
         String fullUrl = String.format("%s?info_hash=%s&peer_id=%s&port=%d&uploaded=%d&downloaded=%d&left=%d&compact=%d", trackerUrl, urlEncodedInfoHash, peerId, port, uploaded, downloaded, left, compact);
 
-        System.out.println(fullUrl);
+//        System.out.println(fullUrl);
+
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(fullUrl))
@@ -60,7 +62,18 @@ public class DiscoverPeers {
 
         // grab the peers field.
         Map<String, Object> torrentData = (Map<String, Object>) decoded;
-        System.out.println(torrentData);
+//        System.out.println(torrentData);
+        byte[] peers = (byte[]) torrentData.get("peers");
+
+//        System.out.println(Arrays.toString(peers));
+
+        for(int i = 0; i < peers.length; i+=6) {
+            String ip = String.format("%d.%d.%d.%d", peers[i] & 0xFF, peers[i+1] & 0xFF, peers[i+2] & 0xFF, peers[i+3] & 0xFF);
+
+            int port = ((peers[i+4] & 0xFF) << 8) | (peers[i+5] & 0xFF);
+
+            System.out.println(ip + ":" + port);
+        }
     }
 
 }

@@ -81,7 +81,6 @@ public class BencodeParser {
             Object value = decodeBencode(bencodedString);
             if(key.equals("pieces") || key.equals("peers")) rawByteFlag = false;
 
-            System.out.println(key + ": " + value);
             map.put(key, value);
         }
         index++;  // skip e character
