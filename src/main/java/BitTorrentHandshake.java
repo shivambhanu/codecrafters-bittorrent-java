@@ -17,6 +17,7 @@ public class BitTorrentHandshake {
     public void performHandshake() throws IOException {
         byte[] handshakeMessage = createHandshake(infoHash, peerId);
 
+        //TODO: Parse ip and port dynamically instead of hardcoding it.
         Socket socket = new Socket("161.35.46.221", 51414);
         OutputStream out = socket.getOutputStream();
         out.write(handshakeMessage);
@@ -28,6 +29,17 @@ public class BitTorrentHandshake {
 
         if(bytesRead == 68) {
             System.out.println("Handshake successful!");
+            StringBuilder hexString = new StringBuilder();
+            for(int i = 48; i < 68; i++) {
+                byte b = response[i];
+                String hex = Integer.toHexString(0xff & b);
+                if(hex.length() == 1){
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            System.out.println(hexString);
         } else {
             System.out.println("Invalid response or connection error");
         }
