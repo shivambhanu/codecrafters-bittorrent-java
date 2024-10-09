@@ -7,18 +7,22 @@ import java.util.Map;
 public class BitTorrentHandshake {
     final private byte[] infoHash;
     final private byte[] peerId;
+    final private String ip;
+    final private Integer port;
 
 
-    public BitTorrentHandshake(Map<String, Object> infoMap) throws Exception {
+    public BitTorrentHandshake(Map<String, Object> infoMap, String ip, Integer port) throws Exception {
         this.infoHash = generateInfoHash(infoMap);
         peerId = generatePeerId();
+        this.ip = ip;
+        this.port = port;
     }
 
     public void performHandshake() throws IOException {
         byte[] handshakeMessage = createHandshake(infoHash, peerId);
 
         //TODO: Parse ip and port dynamically instead of hardcoding it.
-        Socket socket = new Socket("161.35.46.221", 51414);
+        Socket socket = new Socket(ip, port);
         OutputStream out = socket.getOutputStream();
         out.write(handshakeMessage);
         out.flush();

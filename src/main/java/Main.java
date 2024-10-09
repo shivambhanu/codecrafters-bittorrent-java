@@ -75,8 +75,10 @@ public class Main {
                 System.out.println("Invalid torrent file format");
         } else if(command.equals("handshake")) {
             String torrentFilePath = args[1];
+            String ip = args[2].substring(0, args[2].indexOf(':'));
+            Integer port = Integer.parseInt(args[2].substring(args[2].indexOf(':')+1));
 
-            System.out.println("Ip and port: " + args[2]);
+//            System.out.println("Ip: " + ip + ", Port No: " + port);
 
             byte[] fileData = readTorrentFile(torrentFilePath);
             String bencodedValue = new String(fileData, StandardCharsets.ISO_8859_1);
@@ -85,7 +87,7 @@ public class Main {
             if(decoded instanceof Map){
                 Map<String, Object> torrentData = (Map<String, Object>) decoded;
                 Map<String, Object> infoMap = (Map<String, Object>) torrentData.get("info");
-                BitTorrentHandshake bitTorrentHandshake = new BitTorrentHandshake(infoMap);
+                BitTorrentHandshake bitTorrentHandshake = new BitTorrentHandshake(infoMap, ip, port);
                 bitTorrentHandshake.performHandshake();
             } else
                 System.out.println("Invalid torrent file format");
