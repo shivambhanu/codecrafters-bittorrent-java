@@ -32,7 +32,6 @@ public class BitTorrentHandshake {
         int bytesRead = in.read(response);
 
         if(bytesRead == 68) {
-            System.out.println("Handshake successful!");
             StringBuilder hexString = new StringBuilder();
             for(int i = 48; i < 68; i++) {
                 byte b = response[i];
