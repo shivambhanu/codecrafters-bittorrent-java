@@ -55,8 +55,8 @@ public class Re_encode {
 
     public String calculateSHA1(byte[] data) {
         try{
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            byte[] hashBytes = digest.digest(data);
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            byte[] hashBytes = sha1.digest(data);
 
             StringBuilder hexString = new StringBuilder();
             for(byte b : hashBytes) {

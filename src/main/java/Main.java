@@ -58,22 +58,35 @@ public class Main {
             String bencodedValue = new String(fileData, StandardCharsets.ISO_8859_1);
             Object decoded = benParse.decodeBencode(bencodedValue);
 
-            if(decoded instanceof Map){
+            if(decoded instanceof Map) {
                 Map<String, Object> torrentData = (Map<String, Object>) decoded;
 
                 String trackerURL = (String) torrentData.get("announce");
-//                System.out.println("Tracker URL: " + trackerURL);
 
                 Map<String, Object> infoMap = (Map<String, Object>) torrentData.get("info");
                 Long fileLength = (Long) infoMap.get("length");
-//                System.out.println("Length: " + fileLength);
 
                 Re_encode encode = new Re_encode();
                 String infoHash = encode.infoDictHasher(infoMap);
-//                System.out.println("Info Hash: " + infoHash);
 
                 DiscoverPeers discoverPeers = new DiscoverPeers(trackerURL,infoHash, fileLength);
                 discoverPeers.sendGetRequest();
+            } else
+                System.out.println("Invalid torrent file format");
+        } else if(command.equals("handshake")) {
+            String torrentFilePath = args[1];
+
+            System.out.println("Ip and port: " + args[2]);
+
+            byte[] fileData = readTorrentFile(torrentFilePath);
+            String bencodedValue = new String(fileData, StandardCharsets.ISO_8859_1);
+            Object decoded = benParse.decodeBencode(bencodedValue);
+
+            if(decoded instanceof Map){
+                Map<String, Object> torrentData = (Map<String, Object>) decoded;
+                Map<String, Object> infoMap = (Map<String, Object>) torrentData.get("info");
+                BitTorrentHandshake bitTorrentHandshake = new BitTorrentHandshake(infoMap);
+                bitTorrentHandshake.performHandshake();
             } else
                 System.out.println("Invalid torrent file format");
         } else {
