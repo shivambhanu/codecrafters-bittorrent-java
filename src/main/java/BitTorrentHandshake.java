@@ -42,7 +42,7 @@ public class BitTorrentHandshake {
                 hexString.append(hex);
             }
 
-            System.out.println(hexString);
+            System.out.println("Peer ID: " + hexString);
         } else {
             System.out.println("Invalid response or connection error");
         }
